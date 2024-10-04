@@ -100,11 +100,11 @@ ${currentPythonCode}
 
 // Function to create copyable code blocks
 function createCopyableCodeBlocks() {
-  console.log("Creating copyable code blocks");
+  // console.log("Creating copyable code blocks");
   const codeBlocks = document.querySelectorAll("pre code");
-  console.log(`Found ${codeBlocks.length} code blocks`);
+  // console.log(`Found ${codeBlocks.length} code blocks`);
   codeBlocks.forEach((block, index) => {
-    console.log(`Processing code block ${index + 1}`);
+    // console.log(`Processing code block ${index + 1}`);
     const wrapper = document.createElement("div");
     wrapper.className = "code-block";
     block.parentNode.insertBefore(wrapper, block);
