@@ -6,12 +6,69 @@ let pyodide = null; // Variable to hold the Pyodide instance
 let currentPythonCode = ""; // Variable to store the current Python code to execute
 let runPythonButton = null; // Reference to the Run button
 
+// Enhanced db implementation
+const db = {
+  set: function (key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+  },
+  get: function (key) {
+    const value = localStorage.getItem(key);
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value; // Return as-is if it's not JSON
+    }
+  },
+  delete: function (key) {
+    localStorage.removeItem(key);
+  },
+  keys: function () {
+    return Object.keys(localStorage);
+  },
+  prefix: function (prefix) {
+    return Object.keys(localStorage).filter((key) => key.startsWith(prefix));
+  },
+};
+
 // Function to initialize Pyodide
 async function initializePyodide() {
   if (!pyodide) {
     try {
       pyodide = await loadPyodide(); // Load Pyodide asynchronously
       console.log("Loaded successfully");
+
+      // Set up the db interface for Python
+      pyodide.globals.set("db_set", (key, value) =>
+        db.set(key, JSON.parse(value))
+      );
+      pyodide.globals.set("db_get", (key) => JSON.stringify(db.get(key)));
+      pyodide.globals.set("db_delete", (key) => db.delete(key));
+      pyodide.globals.set("db_keys", () => db.keys());
+      pyodide.globals.set("db_prefix", (prefix) => db.prefix(prefix));
+
+      // Add this Python code to create a db object similar to Replit's
+      await pyodide.runPythonAsync(`
+      import json
+
+      class DB:
+          def __setitem__(self, key, value):
+              db_set(key, json.dumps(value))
+          
+          def __getitem__(self, key):
+              return json.loads(db_get(key))
+          
+          def __delitem__(self, key):
+              db_delete(key)
+          
+          def keys(self):
+              return db_keys()
+          
+          def prefix(self, prefix):
+              return db_prefix(prefix)
+      
+      db = DB()
+                  `);
+
       runPythonButton.disabled = false; // Enable the button if Pyodide loads successfully
     } catch (error) {
       console.error("Failed to load Pyodide:", error);
@@ -71,7 +128,7 @@ ${currentPythonCode}
   select.id = "dayDropdown";
   select.className = "day-select";
 
-  for (let i = 1; i <= 50; i++) {
+  for (let i = 1; i <= 51; i++) {
     const option = document.createElement("option");
     option.value = `day${i}`;
     option.textContent = `${i}.diena`;
