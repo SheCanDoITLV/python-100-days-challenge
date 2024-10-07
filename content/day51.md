@@ -266,3 +266,87 @@ for key in keys: #missing colon
 *You will still get an 'attribution error' if you have not defined 'key'.*
 
 </details>
+
+## 👉 Day 61 Challenge
+
+###  Someone is wrong on the Internet!
+Today, we're going to fix the major malfunction with social media - other people and their stupid opinions- and create a Twitter for one!
+
+I know you like to hear the sound of your own voice!
+
+Your program should.
+
+1. Display a menu - Add or View tweets.
+
+2. 'Add' should:
+
+  - Get the tweet input.
+  - Store it to the database with the current timestamp as the key value.
+3. 'View' should:
+
+  - Show the tweets in reverse chronological order.
+  - Show 10 tweets at a time.
+  - Prompt the user to show another 10 tweets (yes or no).
+  - A 'no' choice goes back to the menu.
+
+Timestamp Code:
+
+```python
+timestamp = datetime.datetime.now()
+```
+
+<details>
+<summary>💡 Hint</summary>
+
+- Use the `datetime` library to get the current timestamp.
+- Use the `os` library to clear the console between each 10 tweets shown.
+
+</details>
+
+## Solution (No Peeking!)
+
+<a href="https://www.youtube.com/watch?v=QzqlfMBDZdw" target="_blank">Solution video</a>
+
+<details>
+<summary>👀 Answer</summary>
+
+```python
+
+from replit import db
+import datetime, os, time
+
+def addTweet():
+  tweet = input("🐥 > ")
+  timestamp = datetime.datetime.now()
+  key = f"mes{timestamp}"
+  db[key] = tweet
+  time.sleep(1)
+  os.system("clear")
+
+def viewTweet():
+  matches = db.prefix("mes")
+  matches = matches[::-1]
+  counter = 0
+  for i in matches:
+    print(db[i])
+    print()>
+    time.sleep(0.3)
+    counter+=1
+    if(counter%10==0):
+      carryOn = input("Next 10?: ")
+      if(carryOn.lower()=="no"):
+        break
+  time.sleep(1)
+  os.system("clear")
+
+
+while True:
+  print("Tweeter")
+  menu = input("1: Add Tweet\n2: View Tweets\n> ")
+  if menu == "1":
+    addTweet()
+  else:
+    viewTweet()
+```
+
+</details>
