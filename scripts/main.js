@@ -71,7 +71,7 @@ ${currentPythonCode}
   select.id = "dayDropdown";
   select.className = "day-select";
 
-  for (let i = 1; i <= 50; i++) {
+  for (let i = 1; i <= 51; i++) {
     const option = document.createElement("option");
     option.value = `day${i}`;
     option.textContent = `${i}.diena`;
